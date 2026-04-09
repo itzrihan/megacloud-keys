@@ -1,10 +1,12 @@
 name: Update key
 
 on:
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
-  schedule:
-    - cron: "0 */6 * * *"  # runs every 6 hours
-
+  # schedule:
+  #   - cron: "0 * * * *"
 permissions:
   contents: write
 
@@ -14,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           ref: main
@@ -23,22 +25,16 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Pull latest changes with rebase
         run: git pull origin main --rebase
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: "24"
+          node-version: "18"
 
       - name: Install dependencies
         run: npm install
-
-      - name: Create placeholder files if missing
-        run: |
-          [ -f key.txt ] || echo "" > key.txt
-          [ -f rabbit.txt ] || echo "" > rabbit.txt
 
       - name: Run script to update key.txt
         env:
@@ -51,5 +47,5 @@ jobs:
         with:
           add: "key.txt rabbit.txt"
           message: "Automated update of key"
-          default_author: github_actions
+          default_author: "github_actions"
           push: true
